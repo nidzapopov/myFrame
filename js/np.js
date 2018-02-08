@@ -2,57 +2,64 @@ var objId; // id koji selektuje za prikaz, update ili delete
 
 var np = function(){
 	this.callData('users','sve',function(data){
-		
+		np.setOption('setListOp',data,['firstName']);
+		np.setList('setListLi',data,['firstName','lastName']);
 	});
-	var table = document.getElementById('table');
-	var save = document.getElementById('save');
-	var update = document.getElementById('update');
-	var del = document.getElementById('delete');
-	var getData = document.getElementById('getObj');
-	
-	
-	save.onclick=function(){
-		var obj = np.createObject('data-tip');
-		np.saveData('users',obj,function(objNew){
-			np.createTable(objNew,['id'],'tableBody',function(tr){
-				window['userstrId'].push(tr);
-				trEdit(tr);
-			});
-		});
-	};
-	update.onclick=function(){
-		var obj = np.createObject('data-tip');
-		np.updateData('users',obj,function(obj){
-			np.updateTableTr('users',obj);
-		});
-	};
-	del.onclick=function(){
-		np.deleteData('users');
-		np.removeTableTr('users');
-		np.removeValue('data-tip');
-	};
-	getData.onclick=function(){
-		np.setData(users,objId,'data-tip');
-	};
-	
-	table.onclick=function(){
-		np.createTable('users',['id'],'tableBody',function(tr){
-			for(var i=0;i<tr.length;i++){
-				trEdit(tr[i]);
-			}
-		});
-	};
 };
 
-function trEdit(tr){
-	tr.onclick=function(){
-		var id = tr.getAttribute('data-table');
-		objId = id;
-		np.setData(window['users'],id,'data-tip');
-	};
-}
-
 np.prototype={
+	setList:function(id,obj,arr){
+		if(id != undefined && obj != undefined){
+			if(arr.length != 0 && arr != undefined){
+				var niz = [];
+				for(var i=0;i<obj.length;i++){
+					var li = np.createElement({ele:'li'});
+					var str = '';
+					for(var key in obj[i]){
+						if(arr.indexOf(key) != -1){
+							str += ' '+obj[i][key];
+						}
+					}
+					li.innerHTML=str;
+					var ele = np.id(id);
+					ele.appendChild(li);
+					niz.push(li);
+				}
+				return niz;
+			}else{
+				console.log('parametri nisu dobri');
+				return false;
+			}
+		}else{
+			console.log('parametri nisu dobri');
+			return false;
+		}
+	},
+	setOption:function(id,obj,arr){
+		if(id != undefined && obj != undefined){
+			if(arr.length != 0 && arr != undefined){
+				var niz = [];
+				for(var i=0;i<obj.length;i++){
+					var option = np.createElement({ele:'option'});
+					var str = '';
+					for(var key in obj[i]){
+						if(arr.indexOf(key) != -1){
+							str += ' '+obj[i][key];
+						}
+					}
+					option.innerHTML=str;
+					var ele = np.id(id);
+					ele.appendChild(option);
+					niz.push(option);
+				}
+				return niz;
+			}else{
+				console.log('parametri nisu dobri');
+			}
+		}else{
+			console.log('parametri nisu dobri');
+		}
+	},
 	createTable:function(obj,niz,tbodyId,cb){
 		var tbody = document.getElementById(tbodyId);
 		if(typeof(obj) != 'object'){
