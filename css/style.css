@@ -1,0 +1,92 @@
+
+/************* Validacioni error***************/
+.fieldAlert{
+	color: red;
+}
+/************* POP UP MESSAGE **************/
+
+#popupId{
+	position: fixed;
+	width: 300px;
+	height: auto;
+	bottom: 10px;
+	right: 20px;
+}
+.popUpMsg{
+	width: 100%;
+	border-radius: 10px;
+	padding: 5px;
+	border: 1px solid #31708F;
+	margin-bottom: 20px;
+}
+/* INFO */
+.popupInfo{
+	background: #D9EDF7;
+}
+.popupInfo div{
+	color: #31708F;
+	text-align:center;
+	font-weight: bold;
+}
+.popupInfo div h2{
+	margin: 3px;
+}
+.popupInfo p{
+	color: #31708F;
+	margin: 3px;
+	text-align:center;
+}
+/* DANGER */
+.popupDanger{
+	background: #F2DEDE;
+}
+.popupDanger div{
+	color: #A94442;
+	text-align:center;
+	font-weight: bold;
+}
+.popupDanger div h2{
+	margin: 3px;
+}
+.popupDanger p{
+	color: #A94442;
+	margin: 3px;
+	text-align:center;
+}
+/* SUCCESS */
+.popupSuccess{
+	background: #DFF0D8;
+}
+.popupSuccess div{
+	color: #3C763D;
+	text-align:center;
+	font-weight: bold;
+}
+.popupSuccess div h2{
+	margin: 3px;
+}
+.popupSuccess p{
+	color: #3C763D;
+	margin: 3px;
+	text-align:center;
+}
+
+/************* PROGRESS BAR **************/
+
+.progressWrap{
+	padding:2px;
+	height: 14px;
+	background: white;
+	border-radius:10px;
+	margin: 3px;
+}
+.progressChild{
+	background: green;
+	width: 20%;
+	height: 14px;
+	color:white;
+	font-size:11px;
+	font-weight:bold;
+	text-align: center;
+}
+

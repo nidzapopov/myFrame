@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="Nikola Popov">
+		<meta http-equiv="cache-control" content="max-age=0" />
+		<meta http-equiv="cache-control" content="no-cache" />
+		<meta http-equiv="expires" content="0" />
+		<meta http-equiv="pragma" content="no-cache" />
+		<title>myFr</title>
+		<script type="text/javascript" src="plugins/jquery-1.9.1.js"></script>
+		<link href="plugins/bootstrap/css/bootstrap.css" rel="stylesheet" />
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/spiner.css">
+		<link rel="stylesheet" href="plugins/font-awesome-4.4.0/css/font-awesome.min.css">
+		<script src="plugins/bootstrap/js/bootstrap.js"></script>
+	</head>
+	<body>
+		<div>
+			<input emp type="text" data-tip='firstName' />
+		</div>
+		<div>
+			<input emp type="text" data-tip='lastName' />
+		</div>
+		
+		
+		<select emp data-tip='pc'>
+			<option></option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+		</select>
+		<input emp type="radio" name="news" value="bbc" data-tip='news'/>
+		<input emp type="radio" name="news" value="rtl" data-tip='news'/>
+		
+		<input emp type="checkbox" data-tip='sport' value="Fudbal" /> Fudbal
+		<input emp type="checkbox" data-tip='sport' value="Ragbi"/> Ragbi
+		<input emp type="checkbox" data-tip='sport' value="Kosarka"/> Kosarka
+		<input emp type="checkbox" data-tip='sport' value="Tenis"/> Tenis
+		
+		<textarea emp data-tip='info'></textarea>
+		<input emp type="text" data-tip='game' />
+		
+		<button type="button" id="save">save</button>
+		<button type="button" id="update">update</button>
+		<button type="button" id="delete">delete</button>
+		<button type="button" id="getObj">get data</button>
+		<button type="button" id="table">Table</button>
+		
+		
+		<table class="table">
+			<thead>
+				<tr>
+					<th>firstName</th>
+					<th>lastName</th>
+					<th>pc</th>
+					<th>news</th>
+					<th>sport</th>
+					<th>info</th>
+					<th>game</th>
+				</tr>
+			</thead>
+			<tbody id="tableBody"></tbody>
+		</table>
+		
+		<div id="popupId"></div>
+	</body>
+	<script src="js/np.js"></script>
+</html>
