@@ -13,46 +13,36 @@
 		<title>myFr</title>
 		<script type="text/javascript" src="plugins/jquery-1.9.1.js"></script>
 		<link href="plugins/bootstrap/css/bootstrap.css" rel="stylesheet" />
-		<link rel="stylesheet" href="css/style.css">
-		<link rel="stylesheet" href="css/spiner.css">
 		<link rel="stylesheet" href="plugins/font-awesome-4.4.0/css/font-awesome.min.css">
 		<script src="plugins/bootstrap/js/bootstrap.js"></script>
 	</head>
 	<body>
 		<div>
-			<input emp type="text" data-tip='firstName' />
+			<input type="text"  placeholder="name" data-tip="name"/>
+			<input type="text"  placeholder="lastName" data-tip="lastName"/>
+			<select data-tip="sel">
+				<option></option>
+				<option>1</option>
+				<option>2</option>
+			</select>
+			<textarea data-tip="tex"></textarea>
+			<input type="checkbox" req name="che" data-tip="che"/>
+			<input type="checkbox" name="che" data-tip="che"/>
+			
+			<input type="checkbox" req name="che1" data-tip="che1"/>
+			<input type="checkbox" name="che1" data-tip="che1"/>
+			
+			<input type="radio" req name="rad" data-tip="rad"/>
+			<input type="radio" name="rad" data-tip="rad"/>
+			
+			<button onclick="init()"></button>
 		</div>
 		<div>
-			<input emp type="text" data-tip='lastName' />
+			
 		</div>
-		
-		
-		<select emp data-tip='pc'>
-			<option></option>
-			<option>1</option>
-			<option>2</option>
-			<option>3</option>
-		</select>
-		<input emp type="radio" name="news" value="bbc" data-tip='news'/>
-		<input emp type="radio" name="news" value="rtl" data-tip='news'/>
-		
-		<input emp type="checkbox" data-tip='sport' value="Fudbal" /> Fudbal
-		<input emp type="checkbox" data-tip='sport' value="Ragbi"/> Ragbi
-		<input emp type="checkbox" data-tip='sport' value="Kosarka"/> Kosarka
-		<input emp type="checkbox" data-tip='sport' value="Tenis"/> Tenis
-		
-		<textarea emp data-tip='info'></textarea>
-		<input emp type="text" data-tip='game' />
-		
-		
-		
-		<select id="setListOp"></select>
-		
-		<div id="popupId"></div>
-		
-		<div id="nesto"></div>
 		
 	</body>
 	
-	<script src="js/data.js"></script>
+	<script src="np.js"></script>
+	<script src="validation.js"></script>
 </html>

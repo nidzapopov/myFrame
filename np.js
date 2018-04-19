@@ -1,174 +1,72 @@
-var objId; // id koji selektuje za prikaz, update ili delete
-
-var np = function(){
-	this.callData('users','sve',function(data){
-		var users = new npData(data,'users');
-		console.log(users.podaci)
-	});
+var np = function(tip){
+	this.tip = tip;
 };
 
 np.prototype={
-	setList:function(id,obj,arr){
-		if(id != undefined && obj != undefined){
-			if(arr.length != 0 && arr != undefined){
-				var niz = [];
-				for(var i=0;i<obj.length;i++){
-					var li = np.createElement({ele:'li'});
-					var str = '';
-					for(var key in obj[i]){
-						if(arr.indexOf(key) != -1){
-							str += ' '+obj[i][key];
-						}
-					}
-					li.innerHTML=str;
-					var ele = np.id(id);
-					ele.appendChild(li);
-					niz.push(li);
-				}
-				return niz;
-			}else{
-				console.log('parametri nisu dobri');
-				return false;
-			}
+	save:function(url,cb){
+		var vali = new validation(this.tip);
+		var validacija = vali.validationStart();
+		if(validacija){
+			var obj = np.createObject();
+			np.ajax(obj,false,'POST',url,function(data){
+				cb(data);
+			});
 		}else{
-			console.log('parametri nisu dobri');
-			return false;
+			cb(false);
 		}
 	},
-	setOption:function(id,obj,arr){
-		if(id != undefined && obj != undefined){
-			if(arr.length != 0 && arr != undefined){
-				var niz = [];
-				for(var i=0;i<obj.length;i++){
-					var option = np.createElement({ele:'option'});
-					var str = '';
-					for(var key in obj[i]){
-						if(arr.indexOf(key) != -1){
-							str += ' '+obj[i][key];
-						}
-					}
-					option.innerHTML=str;
-					var ele = np.id(id);
-					ele.appendChild(option);
-					niz.push(option);
-				}
-				return niz;
-			}else{
-				console.log('parametri nisu dobri');
-			}
+	update:function(url,cb){
+		var vali = new validation(this.tip);
+		var validacija = vali.validationStart();
+		if(validacija){
+			var obj = np.createObject();
+			np.ajax(obj,false,'POST',url,function(data){
+				cb(data);
+			});
 		}else{
-			console.log('parametri nisu dobri');
+			cb(false);
 		}
 	},
-	createObject:function(tip,cb){
-		var array = [];
-		var allElements = document.getElementsByTagName('*');
+	remove:function(id,url,cb){
+		np.ajax({id:id},false,'POST',url,function(data){
+			cb(data);
+		});
+	},
+	getData:function(url,cb){
+		np.ajax({},false,'POST',url,function(data){
+			cb(data);
+		});
+	},
+	createObject:function(){
+		var allElements = $('['+this.tip+']');
 		var obj = {};
 		for(var i=0;i<allElements.length;i++){
-			if (allElements[i].getAttribute(tip) !== null){
-				array.push(allElements[i]);
-			}
-		}
-		for(var i=0;i<array.length;i++){
-			if (array[i].tagName == 'INPUT'){
-				if (array[i].type == 'text'){
-					var attr = array[i].getAttribute(tip);
-					obj[attr] = array[i].value;
-				}else if(array[i].type == 'checkbox'){
-					if(array[i].checked){
-						var attr = array[i].getAttribute(tip);
-						if(obj[attr] != undefined){
-							obj[attr] += ','+array[i].value;
+			var attr = allElements[i].getAttribute(this.tip);
+			if(allElements[i].type == 'checkbox' || allElements[i].type == 'radio'){
+				if(allElements[i].type == 'checkbox'){
+					if(allElements[i].checked){
+						var stariO = obj[attr];
+						if(stariO == undefined){
+							obj[attr]=allElements[i].value;
 						}else{
-							obj[attr] = array[i].value;
+							obj[attr] = stariO+','+allElements[i].value+',';
 						}
 					}
-				}else if(array[i].type == 'radio'){
-					if(array[i].checked){
-						var attr = array[i].getAttribute(tip);
-						obj[attr] = array[i].value;
-					}else{
-						var attr = array[i].getAttribute(tip);
-						obj[attr] = '';
-					}
-				}
-			}else if(array[i].tagName == 'SELECT'){
-				var attr = array[i].getAttribute(tip);
-				obj[attr] = array[i].value;
-			}else if(array[i].tagName == 'TEXTAREA'){
-				var attr = array[i].getAttribute(tip);
-				obj[attr] = array[i].value;
-			}
-		}
-		if(typeof(cb) == 'function'){
-			cb(obj);
-		}else{
-			return obj;
-		}
-	},
-	callData:function(table,all,cb){
-		this.ajaxLoding('start'); 
-		if(table != undefined && all != undefined){// proveravanje postojanje parametara
-			if(table != '' && all != ''){// proveravanje parametara
-				if(window[table] != undefined){// proveravanje global variable
-					console.log('Global variable already exists');
-					return false;
-				}
-				if(all != 'sve'){// ako trazimo posebne vrednosti iz tabele
-					all.upit = 'upit';
-					all.table = table;
-					all.select = 'select';
-					this.ajax(all,true,'POST',function(data){
-						if(typeof(cb) === 'function'){
-							cb(data);
-						}
-					});
 				}else{
-					var all = {'upit':'upit','table':table};// ako trazimo sve vrednosti iz tabele
-					this.ajax(all,true,'POST',function(data){
-						if(typeof(cb) === 'function'){
-							cb(data);
-						}
-					});
+					if(allElements[i].checked){
+						obj[attr]=allElements[i].value;
+					}
 				}
 			}else{
-				console.log('Call data parameter is empty');
-				if(typeof(cb) === 'function'){
-					cb('Call data parameter is empty');
-				}
-			}
-		}else{
-			console.log('Call data must have included all parameter');
-			if(typeof(cb) === 'function'){
-				cb('Call data must have included all parameter');
+				obj[attr]=allElements[i].value;
 			}
 		}
-		this.ajaxLoding('stop');
+		return obj;
 	},
-	ajaxLoding:function(metod){
-		if(metod != undefined){
-			if(metod == 'start'){
-				var div = this.createElement({ele:'div',attr:{'class':'circleAjaxLoading'}});
-				var div1 = this.createElement({ele:'div',attr:{'class':'circle1AjaxLoading1'}});
-				var div2 = this.createElement({ele:'div',attr:{'class':'boxAjaxLoading1'}});
-				var wrap = this.createElement({ele:'div',attr:{'class':'wrapAjaxLoading'}});
-				div2.appendChild(div);
-				div2.appendChild(div1);
-				wrap.appendChild(div2);
-				var body = document.getElementsByTagName('body');
-				body[0].appendChild(wrap);
-			}else{
-				var div = document.getElementsByClassName('wrapAjaxLoading');
-				div[0].parentNode.removeChild(div[0]);
-			}
-		}else{
-			console.log('ajaxLoding must have included all parameter');
-		}
-	},
-	ajax:function(obj,async,type,cb){
+	ajax:function(obj,async,type,url,cb){
 		$.ajax({
 			type: type,
-			url: 'server/server.php',
+			url: url,
 			dataType: 'json',
 			data: obj,
 			async:async,
@@ -176,396 +74,21 @@ np.prototype={
 				cb(resultData);
 			},
 			error:function(error) { 
-				console.log(error.responseText);
-				console.log("Something went wrong");
+				cb(error.responseText);
 			}
 		});
 	},
-	createElement:function(obj){
-		for(var i in obj){
-			switch(i){
-				case "ele":
-					var element = document.createElement(obj[i]);
-					break;
-				case "attr":
-					this.attr(obj[i],element);
-					break;
-				case "html":
-					element.innerHTML=obj[i];
-					break;
-			}
-		}
-		return element;
-	},
-	attr:function(p,x){
-		for(var i in p){
-            x.setAttribute(i,p[i]);
-        }
-	},
-	validacija:function(tip,cb){
-		var array = [];
-		var allElements = document.getElementsByTagName('*');
-		var flag = true;
-		
-		for(var i=0;i<allElements.length;i++){
-			if (allElements[i].getAttribute(tip) !== null){
-				array.push(allElements[i]);
-			}
-		}
-		for(var i=0;i<array.length;i++){
-			if (array[i].type == 'text' || array[i].tagName == 'TEXTAREA' || array[i].tagName == 'SELECT'){
-				var flgaIn = true;
-				var num = np.validacijaNum(array[i]);
-				var emp = np.validacijaEmp(array[i]);
-				var length = np.validacijaLen(array[i]);
-				if(num == false || emp == false || length == false){
-					flgaIn = false;
-				} 
-				if(flgaIn){
-					$(array[i]).parent().find('.fieldAlert').remove();
-				}else{
-					if(!$(array[i]).parent().find('.fieldAlert').length){
-						$("<span class='fieldAlert'>*</span>").insertAfter(array[i]);
-					}
-					flag = false;
-				}
-			}
-		}
-		if(flag){
-			if(typeof(cb) === 'function'){
-				cb(true);
-			}else{
-				return true;
-			}
-		}else{
-			if(typeof(cb) === 'function'){
-				cb(false);
-			}else{
-				return false;
-			}
-		}
-	},
-	validacijaNum:function(ele){
-		var num = ele.getAttribute('num');
-		if(num != null){
-			var val = ele.value;
-			if(isNaN(val)){
-				return false;
-			}else{
-				return true;
-			}
-		}else{
-			return true;
-		}
-	},
-	validacijaEmp:function(ele){
-		var emp = ele.getAttribute('emp');
-		if(emp != null){
-			var val = ele.value;
-			if(val == ''){
-				return false;
-			}else{
-				return true;
-			}
-		}else{
-			return true;
-		}
-	},
-	validacijaLen:function(ele){
-		var length = ele.getAttribute('length');
-		if(length != null){
-			var val = array[i].value;
-			if(val.length <= length){
-				return false;
-			}else{
-				return true;
-			}
-		}else{
-			return true;
-		}
-	},
-	saveData:function(table,obj,cb){
-		if(table == undefined || table == ''){
-			console.log('parameter is not good');
-			if(typeof(cb) == 'function'){
-				cb(false);
-				return false;
-			}else{
-				return false;
-			}
-		}
-		obj.upit = 'unos';
-		obj.table = table;
-		np.ajax(obj,true,'POST',function(data){
-			if(window[table] != undefined){
-				var global = obj.table;
-				delete obj.upit;
-				delete obj.table;
-				obj.id = ''+data[0]+'';
-				window[global].push(obj);
-			}
-			if(typeof(cb) == 'function'){
-				cb(obj);
-			}else{
-				return obj;
-			}
-		});
-	},
-	updateData:function(table,obj,cb){
-		if(objId == undefined || objId == ''){
-			console.log('id is not good');
-			if(typeof(cb) == 'function'){
-				cb(false);
-				return false;
-			}else{
-				return false;
-			}
-		}
-		obj.id = objId;
-		obj.upit = 'izmena';
-		obj.table = table;
-		np.ajax(obj,true,'POST',function(data){
-			if(window[table] != undefined){
-				var glob = window[table];
-				delete obj.upit;
-				delete obj.table;
-				for(var i=0;i<glob.length;i++){
-					if(glob[i].id == obj.id){
-						glob.splice(i, 1);
-					}
-				}
-				glob.push(obj);
-				if(typeof(cb) == 'function'){
-					cb(obj);
-				}else{
-					return obj;
-				}
-			}
-		});
-	},
-	deleteData:function(table,cb){
-		if(objId == undefined || objId == ''){
-			console.log('id is not good');
-			if(typeof(cb) == 'function'){
-				cb(false);
-				return false;
-			}else{
-				return false;
-			}
-		}
-		var obj = {};
-		obj.id = objId;
-		obj.upit = 'brisanje';
-		obj.table = table;
-		np.ajax(obj,true,'POST',function(data){
-			if(window[table] != undefined){
-				var glob = window[table];
-				for(var i=0;i<glob.length;i++){
-					if(glob[i].id == obj.id){
-						glob.splice(i, 1);
-					}
-				}
-				objId = undefined;
-				if(typeof(cb) == 'function'){
-					cb(true);
-				}else{
-					return true;
-				}
-			}
-		});
-	},
-	setData:function(arr,id,tip,cb){
-		objId = id; // stavljamo id u globalnu kako bi znali koji objekat smo selektovali
-		var array = [];
-		var allElements = document.getElementsByTagName('*');
-		
-		for(var i=0;i<allElements.length;i++){
-			if (allElements[i].getAttribute(tip) !== null){
-				array.push(allElements[i]);
-			}
-		}
-		var obj;
-		for(var i=0;i<arr.length;i++){
-			if(arr[i].id == id){
-				obj = arr[i];
-			}
-		}
-		for(var key in obj){
-			for(var x=0;x<array.length;x++){
-				if(key == array[x].getAttribute(tip)){
-					if(array[x].tagName == 'INPUT'){
-						if(array[x].type == 'checkbox'){
-							var split = obj[key].split(',');
-							for(var p=0;p<split.length;p++){
-								if(split[p] == array[x].getAttribute('value')){
-									array[x].checked = true;
-								}
-							}
-						}else if(array[x].type == 'radio'){
-							if(array[x].getAttribute('value') == obj[key]){
-								array[x].checked = true;	
-							}
-						}else if(array[x].type == 'text'){
-							array[x].value = obj[key];
-						}
-					}else{
-						array[x].value = obj[key];
-					}
-				}
-			}
-		}	
-		if(typeof(cb) == 'function'){
-			cb(true);
-		}else{
-			return true;
-		}
-	},
-	removeValue:function(tip,cb){
-		var array = [];
-		var allElements = document.getElementsByTagName('*');
-		
-		for(var i=0;i<allElements.length;i++){
-			if (allElements[i].getAttribute(tip) !== null){
-				array.push(allElements[i]);
-			}
-		}
-		for(var i=0;i<array.length;i++){
-			if(array[i].tagName == 'INPUT'){
-				if(array[i].type == 'checkbox'){
-					array[i].checked = false;
-				}else if(array[i].type == 'text'){
-					array[i].value = '';
-				}else if(array[i].type == 'radio'){
-					array[i].checked = false;
-				}
-			}else if(array[i].tagName == 'TEXTAREA'){
-				array[i].value = '';
-			}else if(array[i].tagName == 'SELECT'){
-				array[i].value = '';
-			}
-		}
-		objId = '';
-		if(typeof(cb) == 'function'){
-			cb(true);
-		}else{
-			return true;
-		}
-	},
-	popUpMsg:function(tip,msg){
-		var wrap = document.createElement('div');
-			wrap.setAttribute('class','popUpMsg');
-		var tipWrap = document.createElement('div');
-		var p = document.createElement('p');
-		switch(tip){
-			case 'Info':
-				wrap.setAttribute('class','popUpMsg popupInfo');
-				tipWrap.innerHTML='<h2>Obaveštenje!</h2>';
-			break;
-			case 'Danger':
-				wrap.setAttribute('class','popUpMsg popupDanger');
-				tipWrap.innerHTML='<h2>Pažnja!</h2>';
-			break;
-			case 'Success':
-				wrap.setAttribute('class','popUpMsg popupSuccess');
-				tipWrap.innerHTML='<h2>Uspelo!</h2>';
-			break;
-		}
-		p.innerHTML=msg;
-		wrap.appendChild(tipWrap);
-		wrap.appendChild(p);
-		document.getElementById("popupId").appendChild(wrap);
-		setTimeout(function(){
-			var parent = wrap.parentNode;
-			parent.removeChild(wrap);
-		},2000);
-	},
-	getDate:function(clock){
-		var date = new Date();
-		var year = date.getFullYear();
-		var m = date.getMonth()+1;
-		var d = date.getDate();
-		
-		var h = date.getHours();
-		var mi = date.getMinutes();
-		var se = date.getSeconds();
-		
-		if(m <= 9){
-			m = '0'+m;
-		}
-		
-		if(clock != undefined){
-			var all = year+'-'+m+'-'+d+' '+h+':'+mi+':'+se;
-		}else{
-			var all = year+'-'+m+'-'+d;
-		}
-		
-		return all;
-	},
-	id:function(id){
-		var id = document.getElementById(id);
-		return id;
-	},
-	insertSingleImg:function(eleId,id,cb){
-		var progresWrap = np.createElement({ele:'div',attr:{'class':'progressWrap'}});
-		var progres = np.createElement({ele:'div',attr:{'class':'progressChild'}});
-		progresWrap.appendChild(progres);
-		var inp = np.id(eleId);
-		inp.parentNode.insertBefore(progresWrap, inp.nextSibling);
-		var inpWidth = inp.offsetWidth;
-		progresWrap.style.width = inpWidth+'px';
-		progres.innerHTML='20%';
-		var file = $('#'+eleId+'').prop('files')[0];
-		if(file != undefined){
-			var flag = false;
-			var name = file.name;
-			var pos = name.split('.');
-			var last = pos[pos.length - 1];
-			var niz = ["jpg","jpeg","gif","png"];
-			for(var i=0;i<niz.length;i++){
-				if(niz[i] == last){
-					flag = true;
-				}
-			}
-			progres.innerHTML='40%';
-			progres.style.width = '40%';
-			if(flag){
-				var form_data = new FormData();                  
-				form_data.append('file', file);  
-				form_data.append('upit', 'singleImg'); 
-				form_data.append('name', file.name); 
-				form_data.append('id', id); 
-				$.ajax({
-					url: 'server/server.php', 
-					dataType: 'text',  
-					cache: false,
-					async:false,
-					contentType: false,
-					processData: false,
-					data: form_data,                         
-					type: 'post',
-					success: function(response){
-						progres.innerHTML='100%';
-						progres.style.width = '100%';
-						setTimeout(function(){
-							inp.parentNode.removeChild(progresWrap);
-						},2000);
-						if(response[0] != 'error'){
-							cb('ok');
-						}else{
-							cb('error');
-						}
-					}
-				});
-			}
-		}
-	}
 };
 
 
-var np = new np();
+var np = new np('data-tip');
 
 
-
+function init(){
+	np.save('/project/save',function(data){
+		console.log(data);
+	});
+}
 
 
 
