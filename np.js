@@ -19,14 +19,14 @@ np.prototype={
 	 * 
 	 */
 	save:function(cb){
-		var validation = this.validation();
-		if(validation){
-			var data_all = this.data;
-			var obj = this.create_object();
-			var flag = false;
-			obj['action']='save';
-			obj['table']=this.table;
-			this.ajax(obj,false,'POST',function(data){
+		var validation = this.validation(); // pozivanje validacije
+		if(validation){ // ako je validacija dobra
+			var data_all = this.data;  // svi podaci
+			var obj = this.create_object(); // kreiranje objekta
+			var flag = false; 
+			obj['action']='save'; // dodavanje uslova za php fajl
+			obj['table']=this.table; // dodavanje naziva tabele
+			this.ajax(obj,false,'POST',function(data){ // ajax
 				if(data[0] == 'error'){
 					cb('error');
 				}else{
@@ -35,7 +35,7 @@ np.prototype={
 				}
 			});
 			if(flag){
-				this.refresh_data(obj,'save');
+				this.refresh_data(obj,'save'); // resetovanje podataka
 				cb(obj);
 			}
 		}else{
@@ -54,21 +54,21 @@ np.prototype={
 	 * 
 	 */
 	update:function(id,cb){
-		var validation = this.validation();
-		if(validation){
-			var data_all = this.data;
-			var obj = this.create_object();
+		var validation = this.validation(); // pozivanje validacije
+		if(validation){ // ako je validacija dobra
+			var data_all = this.data; // svi podaci
+			var obj = this.create_object(); // kreiranje objekta
 			var flag = false;
-			obj['action']='update';
-			obj['table']=this.table;
-			obj['id']=id;
-			this.ajax(obj,false,'POST',function(data){
+			obj['action']='update'; // dodavanje uslova za php fajl
+			obj['table']=this.table; // dodavanje naziva tabele
+			obj['id']=id; // dodavanje id
+			this.ajax(obj,false,'POST',function(data){ // ajax
 				if(data[0] == 'ok'){
 					flag = true;
 				}
 			});
 			if(flag){
-				this.refresh_data(obj,'update');
+				this.refresh_data(obj,'update');  // resetovanje podataka
 				cb('ok');
 			}else{
 				cb('error');
@@ -89,14 +89,14 @@ np.prototype={
 	 * 
 	 */
 	remove:function(id,cb){
-		var data_all = this.data;
+		var data_all = this.data; // svi podaci
 		var flag = false;
 		var obj = {
 			'id':id,
 			'action':'delete'
 		};
-		obj['table']=this.table;
-		this.ajax(obj,false,'POST',function(data){
+		obj['table']=this.table; // dodavanje tabele
+		this.ajax(obj,false,'POST',function(data){ // ajax
 			if(data[0]=='ok'){
 				flag = true;
 			}else{
@@ -104,7 +104,7 @@ np.prototype={
 			}
 		});
 		if(flag){
-			this.refresh_data(obj,'remove');
+			this.refresh_data(obj,'remove'); // reseotvanje podataka
 			cb('ok');
 		}else{
 			cb('error');
@@ -327,16 +327,6 @@ np.prototype={
 };
 
 
-var user = new np('data-tip','user','server/server.php');
-    user.create_li('name','lastName','mes');
-    console.log(user)
-function init(){
-	
-	user.save(function(obj){
-		console.log(obj)
-	});
-	
-}
 
 
 
